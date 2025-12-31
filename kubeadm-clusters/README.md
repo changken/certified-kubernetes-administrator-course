@@ -20,3 +20,9 @@ In this section we present various labs for building kubeadm clusters
 
     * [3 Node Cluster](./virtualbox/)
 
+* Vagrant and VMware
+
+    For users of Windows, Linux, and macOS with VMware Workstation/Fusion (including 25H2), provision a 3 node cluster on your laptop.
+
+    * [3 Node Cluster](./vmware/)
+

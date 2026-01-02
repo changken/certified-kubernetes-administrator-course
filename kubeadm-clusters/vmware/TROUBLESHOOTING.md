@@ -319,6 +319,48 @@ sudo iptables -F && sudo iptables -t nat -F && sudo iptables -t mangle -F && sud
 
 ---
 
+---
+
+## WSL 小技巧：借用 Windows Git Credentials
+
+如果你在 WSL 中 `git push` 遇到認證問題：
+
+```
+fatal: could not read Username for 'https://github.com': No such device or address
+```
+
+### 解決方案：直接呼叫 Windows 的 Git
+
+WSL 可以直接執行 Windows 程式！Windows 的 Git 通常已經存好 GitHub credentials：
+
+```bash
+# 在 WSL 中執行 Windows PowerShell 來 push
+powershell.exe -Command "cd 'C:\path\to\repo'; git push origin master"
+
+# 或者用完整路徑
+/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "git push"
+```
+
+### 其他實用的 WSL 互通指令
+
+```bash
+# 開啟 Windows 檔案總管到當前目錄
+explorer.exe .
+
+# 用 VS Code 開啟專案
+code .
+
+# 開啟記事本
+notepad.exe file.txt
+
+# 執行 Windows 指令
+cmd.exe /c "dir"
+```
+
+這個功能讓 WSL 成為真正的 "Best of Both Worlds"！
+
+---
+
 *最後更新：2026 年 1 月*
 *Kubernetes 版本：v1.35.0*
 *測試環境：VMware Workstation 25H2 + Ubuntu 22.04*

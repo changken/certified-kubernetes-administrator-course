@@ -74,6 +74,22 @@ Default configuration:
 
 - [Prerequisites and Setup](./docs/01-prerequisites.md) - Detailed step-by-step instructions
 - [Box Selection Guide](./BOX_SELECTION.md) - Why we use bento/ubuntu-22.04 instead of ubuntu/jammy64
+- [Troubleshooting Guide](./TROUBLESHOOTING.md) - Common issues and solutions when installing K8s
+
+## Setup Scripts
+
+Automated scripts are provided in the `scripts/` directory:
+
+```bash
+# 1. Run prerequisites on ALL nodes
+sudo ./scripts/k8s-prerequisites.sh
+
+# 2. Install kubeadm on ALL nodes
+sudo ./scripts/install-kubeadm.sh
+
+# 3. Initialize controlplane (controlplane node only)
+sudo ./scripts/init-controlplane.sh
+```
 
 ## Common Commands
 
@@ -104,13 +120,24 @@ vagrant reload
 
 ## Troubleshooting
 
+**For a complete troubleshooting guide, see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)**
+
+### Common Issues Quick Reference
+
+| Issue | Solution |
+|-------|----------|
+| Swap not disabled | `sudo swapoff -a` |
+| ip_forward not enabled | `sudo sysctl -w net.ipv4.ip_forward=1` |
+| br_netfilter not loaded | `sudo modprobe br_netfilter` |
+| containerd not configured | Set `SystemdCgroup = true` |
+| CNI not initialized | Restart containerd + kubelet |
+| WiFi bridge not working | Use NAT mode instead |
+
 ### Box Provider Errors
 
 If you see an error like "The box you're attempting to add doesn't support the provider", this means the box doesn't have a VMware version available. The Vagrantfile uses `bento/ubuntu-22.04` which supports VMware.
 
 **For detailed explanation, see [BOX_SELECTION.md](./BOX_SELECTION.md)**
-
-If you want to use a different box, search for boxes at [Vagrant Cloud](https://app.vagrantup.com/boxes/search) and filter by "vmware_desktop" provider.
 
 ### VMware GUI Option
 If you want to disable the GUI for VMs, edit the Vagrantfile and change:
@@ -118,11 +145,17 @@ If you want to disable the GUI for VMs, edit the Vagrantfile and change:
 vmware.gui = false
 ```
 
-### Network Issues
-If you encounter network connectivity issues in BRIDGE mode:
-1. Verify your network adapter is correctly detected
-2. Try switching to NAT mode
-3. Check VMware network settings
+### Network Issues (WiFi vs Ethernet)
+
+| Connection | BRIDGE Mode | NAT Mode |
+|------------|-------------|----------|
+| RJ45 Ethernet | Works | Works |
+| WiFi | Usually fails | Works |
+
+If using WiFi, switch to NAT mode in `Vagrantfile`:
+```ruby
+BUILD_MODE = "NAT"
+```
 
 ### Plugin Issues
 If the VMware plugin isn't working:
